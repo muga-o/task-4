@@ -1,0 +1,39 @@
+Floating-Point Arithmetic and Numerical Errors
+
+A. Real-World Case Description
+
+Scenario: A financial ledger system calculating the sum of millions of micro-transactions (e.g., fractional interest payments or cryptocurrency trades).
+
+The Problem: Computers use binary floating-point (IEEE 754 standard) to represent decimals. Because binary cannot perfectly represent most base-10 fractions (like 0.1), tiny rounding errors occur. In a high-volume financial system, if these tiny errors accumulate, the final account balance can be off by significant amounts, leading to financial discrepancies.
+
+
+B. Identification of Input Values and Mathematical Operations
+
+Inputs: Floating-point numbers representing currency (e.g., 0.1 and 0.2), and extremely large numbers to test system limits.
+
+Mathematical Operations: Basic addition (+), subtraction (-), multiplication (*), and division (/).
+
+
+C. Changing an Input/Parameter and Its Effect
+
+Change: We change the inputs from simple decimals to a subtraction of two numbers that are nearly identical (1.0000000000000001 - 1.0000000000000000).
+
+Effect: In exact mathematics, the result is 1e-16. However, in Python, the result becomes exactly 0.0. This is due to catastrophic cancellation. The computer does not have enough bits (it is limited to ~15-17 significant decimal digits for a 64-bit float) to hold the tiny difference at the 16th decimal place, so it rounds the smaller number up to exactly 1.0, making the difference zero.
+
+
+D. Meaning of Output and Interpretation
+
+0.1 + 0.2 = 0.30000000000000004: This output proves that binary floating-point arithmetic is not perfectly precise for base-10 decimals.
+
+1.0000000000000001 - 1.0 = 0.0: This output shows the limits of floating-point precision (Machine Epsilon). The system simply cannot see numbers smaller than the precision limit.
+
+Overflow (inf): When we multiply the maximum possible float by 2, the output is inf. This means the result exceeded the maximum memory allocated for that data type, resulting in an overflow error.
+
+
+E. Modified Program for a Related Case (The Solution)
+
+New Assumptions: To solve the financial ledger issue, we must assume that exact precision is mandatory, and we cannot use standard float data types.
+
+Modification: We modify the program to use Python’s built-in decimal module, which uses fixed-point arithmetic rather than floating-point binary.
+
+Output & Interpretation: Using the Decimal module, Decimal('0.1') + Decimal('0.2') outputs exactly 0.3. This eliminates the rounding error and is the standard practice for real-world financial software.
